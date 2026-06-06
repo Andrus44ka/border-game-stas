@@ -30,7 +30,7 @@ services:
     restart: on-failure
 
   pgadmin:
-    image: dpage/pgadmin
+    image: elestio/pgadmin
     env_file: .env
     ports:
       - "5050:80"
