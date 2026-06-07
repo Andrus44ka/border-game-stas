@@ -1,32 +1,31 @@
 package main
 
 import (
-	"boardgames/models"
+	"boarderGameStat/models"
 	"fmt"
 	"log"
+	"os"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-const host = "localhost"
-const user = "cergo"
-const password = ""
-const dbname = "boarder_games_stat_db"
-const port = 5432
-const sslmode = "disable"
-
 func main() {
-	// 1. Подключение
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=%s",
-		host, user, password, dbname, port, sslmode)
+	dsn := fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_NAME"),
+	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Ошибка подключения:", err)
 	}
+	// defer db.Close()
 
-	// 2. Миграция таблиц
 	err = db.AutoMigrate(&models.User{}, &models.Game{})
 	if err != nil {
 		log.Fatal("Ошибка миграции:", err)

@@ -7,7 +7,7 @@ type Game struct {
 	gorm.Model
 	Title        string `gorm:"type:varchar(100);not null"`
 	Description  string `gorm:"type:text"`
-	CountPlayers int    `gorm:"type:int"; "default:2"; "not null""`
+	CountPlayers int    `gorm:"type:int;default:2;not null"`
 	// CountPlayers int    `gorm:"type:int;default:2;not null"`
 
 	// Связь с пользователями
