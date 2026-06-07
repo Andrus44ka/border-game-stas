@@ -5,13 +5,29 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql
     networks:
       - postgres_net
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin -d boarderGameStat"]
       interval: 5s
       retries: 5
+
+  migrate:
+    image: migrate/migrate
+    volumes:
+      - ./migrations:/migrations
+    networks:
+      - postgres_net
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: [
+      "-path", "/migrations",
+      "-database", "postgres://admin:secret@postgres:5432/boarderGameStat?sslmode=disable",
+      "up"
+    ]
+    restart: on-failure
 
   pgadmin:
     image: elestio/pgadmin
@@ -29,8 +45,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     networks:
       - postgres_net
 

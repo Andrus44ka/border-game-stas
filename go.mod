@@ -2,6 +2,7 @@ module boarderGameStat
 
 go 1.26.4
 
+<<<<<<< HEAD
 require (
 	github.com/lib/pq v1.12.3
 	gorm.io/gorm v1.31.1
@@ -20,3 +21,6 @@ require (
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.31.1
 )
+=======
+require github.com/lib/pq v1.12.3
+>>>>>>> main

@@ -1,6 +1,7 @@
 package main
 
 import (
+<<<<<<< HEAD
 	"boarderGameStat/models"
 	"fmt"
 	"log"
@@ -8,6 +9,15 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+=======
+	"database/sql"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+
+	_ "github.com/lib/pq"
+>>>>>>> main
 )
 
 func main() {
@@ -20,6 +30,7 @@ func main() {
 		os.Getenv("DB_NAME"),
 	)
 
+<<<<<<< HEAD
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Ошибка подключения:", err)
@@ -38,4 +49,22 @@ func main() {
 	}
 
 	fmt.Println("База данных и связи успешно настроены!")
+=======
+	db, err := sql.Open("postgres", dsn)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	if err = db.Ping(); err != nil {
+		log.Fatal("cannot connect to db:", err)
+	}
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "Hello from Go + PostgreSQL!")
+	})
+
+	log.Println("Server started on :8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
+>>>>>>> main
 }
