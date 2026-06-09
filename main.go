@@ -20,10 +20,12 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /users", userHandler.GetUser)
-	mux.HandleFunc("GET /users/{id}/games", userHandler.GetUserByID)
+	mux.HandleFunc("GET /users", userHandler.GetAllUsers)
+	mux.HandleFunc("GET /users/{id}", userHandler.GetUserByID)
+	mux.HandleFunc("GET /users/{id}/games", userHandler.GetUserGames)
 	mux.HandleFunc("POST /users", userHandler.CreateUser)
 	mux.HandleFunc("POST /users/{id}/games/{gameID}", userHandler.AddGameToUser)
+	mux.HandleFunc("DELETE /users/{id}", userHandler.DeleteUser)
 
 	mux.HandleFunc("GET /games", gameHandler.GetGame)
 	mux.HandleFunc("POST /games", gameHandler.CreateGame)
