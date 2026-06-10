@@ -24,6 +24,12 @@ func (r *GameRepository) GetByID(id uint) (*model.Game, error) {
 	return &game, err
 }
 
+func (r *GameRepository) GetByIdWithUsers(id uint) (*model.Game, error) {
+	var game model.Game
+	err := r.db.Preload("Users").First(&game, id).Error
+	return &game, err
+}
+
 func (r *GameRepository) GetAll() ([]model.Game, error) {
 	var games []model.Game
 	err := r.db.Find(&games).Error
@@ -34,6 +40,10 @@ func (r *GameRepository) GetWithPlayers(id uint) (*model.Game, error) {
 	var game model.Game
 	err := r.db.Preload("Users").First(&game, id).Error
 	return &game, err
+}
+
+func (r *GameRepository) Update(game *model.Game) error {
+	return r.db.Save(game).Error
 }
 
 func (r *GameRepository) Delete(id uint) error {

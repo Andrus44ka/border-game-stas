@@ -24,11 +24,15 @@ func main() {
 	mux.HandleFunc("GET /users/{id}", userHandler.GetUserByID)
 	mux.HandleFunc("GET /users/{id}/games", userHandler.GetUserGames)
 	mux.HandleFunc("POST /users", userHandler.CreateUser)
-	mux.HandleFunc("POST /users/{id}/games/{gameID}", userHandler.AddGameToUser)
 	mux.HandleFunc("DELETE /users/{id}", userHandler.DeleteUser)
 
+	mux.HandleFunc("POST /users/{id}/games/{gameID}", userHandler.AddGameToUser)
+
 	mux.HandleFunc("GET /games", gameHandler.GetGame)
+	mux.HandleFunc("GET /games/{id}", gameHandler.GetGameByID)
+	mux.HandleFunc("GET /game/{id}/users", gameHandler.GetGameUsers)
 	mux.HandleFunc("POST /games", gameHandler.CreateGame)
+	mux.HandleFunc("DELETE /game/{id}", gameHandler.DeleteGame)
 
 	log.Println("Server started on :8080")
 	log.Fatal(http.ListenAndServe(":8080", mux))
