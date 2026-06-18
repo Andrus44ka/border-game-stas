@@ -13,22 +13,6 @@ services:
       interval: 5s
       retries: 5
 
-  migrate:
-    image: migrate/migrate
-    volumes:
-      - ./migrations:/migrations
-    networks:
-      - postgres_net
-    depends_on:
-      postgres:
-        condition: service_healthy
-    command: [
-      "-path", "/migrations",
-      "-database", "postgres://admin:secret@postgres:5432/boarderGameStat?sslmode=disable",
-      "up"
-    ]
-    restart: on-failure
-
   pgadmin:
     image: elestio/pgadmin
     env_file: .env
@@ -45,8 +29,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      migrate:
-        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
     networks:
       - postgres_net
 

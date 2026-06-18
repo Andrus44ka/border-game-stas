@@ -1,39 +1,39 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
-	"os"
 
-	_ "github.com/lib/pq"
+	"boarderGameStat/internal/database"
+	"boarderGameStat/internal/handler"
+	"boarderGameStat/internal/repository"
 )
 
 func main() {
-	dsn := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"),
-	)
+	db := database.New()
 
-	db, err := sql.Open("postgres", dsn)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
+	userRepo := repository.NewUserRepository(db)
+	gameRepo := repository.NewGameRepository(db)
 
-	if err = db.Ping(); err != nil {
-		log.Fatal("cannot connect to db:", err)
-	}
+	userHandler := handler.NewUserHandler(*gameRepo, *userRepo)
+	gameHandler := handler.NewGameHandler(*gameRepo)
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello from Go + PostgreSQL!")
-	})
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("GET /users", userHandler.GetAllUsers)
+	mux.HandleFunc("GET /users/{id}", userHandler.GetUserByID)
+	mux.HandleFunc("GET /users/{id}/games", userHandler.GetUserGames)
+	mux.HandleFunc("POST /users", userHandler.CreateUser)
+	mux.HandleFunc("DELETE /users/{id}", userHandler.DeleteUser)
+
+	mux.HandleFunc("POST /users/{id}/games/{gameID}", userHandler.AddGameToUser)
+
+	mux.HandleFunc("GET /games", gameHandler.GetGame)
+	mux.HandleFunc("GET /games/{id}", gameHandler.GetGameByID)
+	mux.HandleFunc("GET /game/{id}/users", gameHandler.GetGameUsers)
+	mux.HandleFunc("POST /games", gameHandler.CreateGame)
+	mux.HandleFunc("DELETE /game/{id}", gameHandler.DeleteGame)
 
 	log.Println("Server started on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }
